@@ -158,10 +158,10 @@ mean_steps_2 <- summarise(by_interval, steps_mean_interval = mean(steps,na.rm = 
 mean_steps_interval <- select(mean_steps_2, steps_mean_interval)
 
 h <- ggplot(data = mean_steps_2, aes(x = interval_dummy, y = steps_mean_interval))
-h + geom_line(col = "blue", size = 0.7) + 
+h + geom_line(col = "blue", size = 0.75) + 
+    scale_x_datetime(labels = date_format("%H:%M"), breaks = date_breaks("2 hour")) + 
     labs(title = "Time-series plot") +
-    labs(x = "Interval identifier", y = "Steps averaged across all days") + 
-    scale_x_datetime(labels = date_format("%H:%M"))
+    labs(x = "Interval identifier", y = "Steps averaged across all days")
 ```
 
 ![plot of chunk unnamed-chunk-7](figure/unnamed-chunk-7-1.png) 
@@ -338,9 +338,9 @@ by_interval_weekpos <- group_by(weekpos_df, week_day_position, interval_dummy)
 total_steps_weekpos <- summarise(by_interval_weekpos, steps_day_weekpos = mean(steps))
 
 j <- ggplot(data = total_steps_weekpos, aes(x = interval_dummy, y = steps_day_weekpos))
-j + geom_line(color = "blue", size = 0.7) + 
+j + geom_line(color = "blue", size = 0.75) + 
     facet_grid(week_day_position ~.) + 
-    scale_x_datetime(labels = date_format("%H:%M")) + 
+    scale_x_datetime(labels = date_format("%H:%M"), breaks = date_breaks("2 hour")) + 
     labs(title = "Time-series plot") + 
     labs(x = "Interval identifier", y = "Steps averaged across all days")
 ```
@@ -349,4 +349,4 @@ j + geom_line(color = "blue", size = 0.7) +
 
 #### Differences between activity pattern for weekdays and weekends
 
-From the time-series plot, it can be observed that there are significant differences, one of which is that the average steps for weekdays are very high near morning hours, i.e. 6:00-10:00, whereas in weekends, they do not become very high until 8:00 after which they remain moderately high until 22:00. In the case of weekdays, however, the average steps start to decrease at 20:00.  Also, the peak mean steps is higher for weekdays than for weekends.
+From the time-series plot, it can be observed that there are significant differences, one of which is that the average steps for weekdays are very high near morning hours, i.e. 6:00-10:00, whereas in weekends, they do not become very high until 8:00 after which they remain moderately high until about 21:30. In the case of weekdays, however, the average steps start to decrease at 20:00.  Also, the peak mean steps is higher for weekdays than for weekends.
