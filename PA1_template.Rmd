@@ -1,9 +1,3 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
 
 # Reproducible Research: Peer Assessment 1
 
@@ -90,8 +84,10 @@ total_steps <- select(total_steps_df,steps_tot)
 The histogram of the total steps per day is plotted using `ggplot()` function as below.
 
 ```{r message=FALSE}
-g <- ggplot(data = total_steps, aes(total_steps$steps_tot))
-g + geom_histogram(col = "white",fill = "blue") + labs(title = "Histogram for total steps per day") + labs(x = "Total steps per day", y = "Count of days")
+g <- ggplot(data = total_steps, aes(steps_tot))
+g + geom_histogram(col = "white",fill = "blue") + 
+    labs(title = "Histogram for total steps per day") + 
+    labs(x = "Total steps per day", y = "Count of days")
 ```
 
 ### Part 3: Calculating the mean and median of the total steps taken per day (ignoring NA values)
@@ -121,8 +117,12 @@ by_interval <- group_by(activitydata_tbldf_dummy,interval_dummy)
 mean_steps_2 <- summarise(by_interval, steps_mean_interval = mean(steps,na.rm = TRUE))
 mean_steps_interval <- select(mean_steps_2, steps_mean_interval)
 
-h <- ggplot(data = mean_steps_2, aes(x = mean_steps_2$interval_dummy, y = mean_steps_2$steps_mean_interval))
-h + geom_line(col = "blue", size = 0.5) + labs(title = "Time-series plot") + labs(x = "Interval identifier", y = "Steps averaged across all days") + scale_x_datetime(labels = date_format("%H:%M"), breaks = date_breaks("2 hour"))
+h <- ggplot(data = mean_steps_2, aes(x = interval_dummy, y = steps_mean_interval))
+h + geom_line(col = "blue", size = 0.75) + 
+    labs(title = "Time-series plot") +
+    labs(x = "Interval identifier", y = "Steps averaged across all days") + 
+    scale_x_datetime(labels = date_format("%H:%M"), breaks = date_breaks("2 hour")) + 
+    theme(aspect.ratio = 0.60)
 ```
 
 
@@ -195,8 +195,10 @@ total_steps_na_filled <- select(total_steps_df_na_filled,steps_tot)
 #### Plotting histogram of total steps per day for imputed data
 
 ```{r message=FALSE}
-i <- ggplot(data = total_steps_na_filled, aes(total_steps_na_filled$steps_tot))
-i + geom_histogram(col = "white",fill = "blue") + labs(title = "Histogram for total steps per day for new dataset") + labs(x = "Total steps per day", y = "Count of days")
+i <- ggplot(data = total_steps_na_filled, aes(steps_tot))
+i + geom_histogram(col = "white",fill = "blue") + 
+    labs(title = "Histogram for total steps per day for new dataset") + 
+    labs(x = "Total steps per day", y = "Count of days")
 ```
 
 #### Calculating mean and median of total steps per day for imputed data
@@ -252,7 +254,12 @@ by_interval_weekpos <- group_by(weekpos_df, week_day_position, interval_dummy)
 total_steps_weekpos <- summarise(by_interval_weekpos, steps_day_weekpos = mean(steps))
 
 j <- ggplot(data = total_steps_weekpos, aes(x = interval_dummy, y = steps_day_weekpos))
-j + geom_line(color = "blue", size = 0.5) + facet_grid(week_day_position~.) + scale_x_datetime(labels = date_format("%H:%M"), breaks = date_breaks("2 hour")) + labs(title = "Time-series plot") + labs(x = "Interval identifier", y = "Steps averaged across all days")
+j + geom_line(color = "blue", size = 0.75) + 
+    facet_grid(week_day_position ~.) + 
+    scale_x_datetime(labels = date_format("%H:%M"), breaks = date_breaks("2 hour")) + 
+    labs(title = "Time-series plot") + 
+    labs(x = "Interval identifier", y = "Steps averaged across all days") +
+    theme(aspect.ratio = 0.35)
 ```
 
 #### Differences between activity pattern for weekdays and weekends

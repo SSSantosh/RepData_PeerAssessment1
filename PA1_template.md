@@ -1,9 +1,3 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
 
 # Reproducible Research: Peer Assessment 1
 
@@ -116,8 +110,10 @@ The histogram of the total steps per day is plotted using `ggplot()` function as
 
 
 ```r
-g <- ggplot(data = total_steps, aes(total_steps$steps_tot))
-g + geom_histogram(col = "white",fill = "blue") + labs(title = "Histogram for total steps per day") + labs(x = "Total steps per day", y = "Count of days")
+g <- ggplot(data = total_steps, aes(steps_tot))
+g + geom_histogram(col = "white",fill = "blue") + 
+    labs(title = "Histogram for total steps per day") + 
+    labs(x = "Total steps per day", y = "Count of days")
 ```
 
 ![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-5-1.png) 
@@ -161,8 +157,12 @@ by_interval <- group_by(activitydata_tbldf_dummy,interval_dummy)
 mean_steps_2 <- summarise(by_interval, steps_mean_interval = mean(steps,na.rm = TRUE))
 mean_steps_interval <- select(mean_steps_2, steps_mean_interval)
 
-h <- ggplot(data = mean_steps_2, aes(x = mean_steps_2$interval_dummy, y = mean_steps_2$steps_mean_interval))
-h + geom_line(col = "blue", size = 0.5) + labs(title = "Time-series plot") + labs(x = "Interval identifier", y = "Steps averaged across all days") + scale_x_datetime(labels = date_format("%H:%M"), breaks = date_breaks("2 hour"))
+h <- ggplot(data = mean_steps_2, aes(x = interval_dummy, y = steps_mean_interval))
+h + geom_line(col = "blue", size = 0.75) + 
+    labs(title = "Time-series plot") +
+    labs(x = "Interval identifier", y = "Steps averaged across all days") + 
+    scale_x_datetime(labels = date_format("%H:%M"), breaks = date_breaks("2 hour")) + 
+    theme(aspect.ratio = 0.60)
 ```
 
 ![plot of chunk unnamed-chunk-7](figure/unnamed-chunk-7-1.png) 
@@ -265,8 +265,10 @@ total_steps_na_filled <- select(total_steps_df_na_filled,steps_tot)
 
 
 ```r
-i <- ggplot(data = total_steps_na_filled, aes(total_steps_na_filled$steps_tot))
-i + geom_histogram(col = "white",fill = "blue") + labs(title = "Histogram for total steps per day for new dataset") + labs(x = "Total steps per day", y = "Count of days")
+i <- ggplot(data = total_steps_na_filled, aes(steps_tot))
+i + geom_histogram(col = "white",fill = "blue") + 
+    labs(title = "Histogram for total steps per day for new dataset") + 
+    labs(x = "Total steps per day", y = "Count of days")
 ```
 
 ![plot of chunk unnamed-chunk-13](figure/unnamed-chunk-13-1.png) 
@@ -337,7 +339,12 @@ by_interval_weekpos <- group_by(weekpos_df, week_day_position, interval_dummy)
 total_steps_weekpos <- summarise(by_interval_weekpos, steps_day_weekpos = mean(steps))
 
 j <- ggplot(data = total_steps_weekpos, aes(x = interval_dummy, y = steps_day_weekpos))
-j + geom_line(color = "blue", size = 0.5) + facet_grid(week_day_position~.) + scale_x_datetime(labels = date_format("%H:%M"), breaks = date_breaks("2 hour")) + labs(title = "Time-series plot") + labs(x = "Interval identifier", y = "Steps averaged across all days")
+j + geom_line(color = "blue", size = 0.75) + 
+    facet_grid(week_day_position ~.) + 
+    scale_x_datetime(labels = date_format("%H:%M"), breaks = date_breaks("2 hour")) + 
+    labs(title = "Time-series plot") + 
+    labs(x = "Interval identifier", y = "Steps averaged across all days") +
+    theme(aspect.ratio = 0.35)
 ```
 
 ![plot of chunk unnamed-chunk-16](figure/unnamed-chunk-16-1.png) 
