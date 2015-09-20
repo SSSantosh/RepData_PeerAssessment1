@@ -162,7 +162,7 @@ mean_steps_2 <- summarise(by_interval, steps_mean_interval = mean(steps,na.rm = 
 mean_steps_interval <- select(mean_steps_2, steps_mean_interval)
 
 h <- ggplot(data = mean_steps_2, aes(x = mean_steps_2$interval_dummy, y = mean_steps_2$steps_mean_interval))
-h + geom_line(col = "blue", size = 0.75) + labs(title = "Time-series plot") + labs(x = "Interval identifier", y = "Steps averaged across all days") + scale_x_datetime(labels = date_format("%H:%M"), breaks = date_breaks("2 hour"))
+h + geom_line(col = "blue", size = 0.5) + labs(title = "Time-series plot") + labs(x = "Interval identifier", y = "Steps averaged across all days") + scale_x_datetime(labels = date_format("%H:%M"), breaks = date_breaks("2 hour"))
 ```
 
 ![plot of chunk unnamed-chunk-7](figure/unnamed-chunk-7-1.png) 
@@ -265,9 +265,8 @@ total_steps_na_filled <- select(total_steps_df_na_filled,steps_tot)
 
 
 ```r
-range <- max(total_steps_na_filled$steps_tot) - min(total_steps_na_filled$steps_tot)
 i <- ggplot(data = total_steps_na_filled, aes(total_steps_na_filled$steps_tot))
-i + geom_histogram(binwidth = range/30 ,col = "white",fill = "blue") + labs(title = "Histogram for total steps per day for new dataset") + labs(x = "Total steps per day", y = "Count of days")
+i + geom_histogram(col = "white",fill = "blue") + labs(title = "Histogram for total steps per day for new dataset") + labs(x = "Total steps per day", y = "Count of days")
 ```
 
 ![plot of chunk unnamed-chunk-13](figure/unnamed-chunk-13-1.png) 
@@ -338,7 +337,7 @@ by_interval_weekpos <- group_by(weekpos_df, week_day_position, interval_dummy)
 total_steps_weekpos <- summarise(by_interval_weekpos, steps_day_weekpos = mean(steps))
 
 j <- ggplot(data = total_steps_weekpos, aes(x = interval_dummy, y = steps_day_weekpos))
-j + geom_line(color = "blue", size = 0.75) + facet_grid(week_day_position~.) + scale_x_datetime(labels = date_format("%H:%M"), breaks = date_breaks("2 hour")) + labs(title = "Time-series plot") + labs(x = "Interval identifier", y = "Steps averaged across all days")
+j + geom_line(color = "blue", size = 0.5) + facet_grid(week_day_position~.) + scale_x_datetime(labels = date_format("%H:%M"), breaks = date_breaks("2 hour")) + labs(title = "Time-series plot") + labs(x = "Interval identifier", y = "Steps averaged across all days")
 ```
 
 ![plot of chunk unnamed-chunk-16](figure/unnamed-chunk-16-1.png) 
