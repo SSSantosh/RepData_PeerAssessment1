@@ -470,9 +470,9 @@ median_steps_date_na_filled
 <h3>Part 1: Creating factor variable with levels &ldquo;Weekday&rdquo; and &ldquo;Weekend&rdquo;</h3>
 
 <p>For this,<br/>
-1. The imputed data set is used. 
-2. An &ldquo;interval_dummy&rdquo; column is created as discussed above (step 3 under &ldquo;Preprocessing&rdquo; and question 2 part 1)to plot timestamps on the x-axis instead of strings. 
-3. <code>weekdays()</code> function is used to create the &ldquo;day&rdquo; column from the &ldquo;datetime&rdquo; variable of the dataset having actual dates and times of measurement. 
+1. The imputed data set is used.<br/>
+2. An &ldquo;interval_dummy&rdquo; column is created as discussed above (step 3 under &ldquo;Preprocessing&rdquo; and question 2 part 1)to plot timestamps on the x-axis instead of strings.<br/>
+3. <code>weekdays()</code> function is used to create the &ldquo;day&rdquo; column from the &ldquo;datetime&rdquo; variable of the dataset having actual dates and times of measurement.<br/>
 4. A new column called &ldquo;week_day_position&rdquo; is added to the data frame with two levels- &ldquo;Weekday&rdquo; if the day is &ldquo;Mon&rdquo; through &ldquo;Fri&rdquo;, and &ldquo;Weekend&rdquo; if the day is &ldquo;Sat&rdquo; or &ldquo;Sun&rdquo;.</p>
 
 <pre><code class="r">weekpos_df &lt;- mutate(df_na_filled, interval_dummy = as.POSIXct(interval, format = &quot;%H : %M&quot;, tz = &quot;GMT&quot;), day = weekdays(date_time, abbreviate = TRUE))

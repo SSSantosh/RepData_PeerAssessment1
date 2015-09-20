@@ -306,9 +306,9 @@ Theoretically, since all the missing values are replaced by the means for the 5-
 ### Part 1: Creating factor variable with levels "Weekday" and "Weekend"
 
 For this,  
-1. The imputed data set is used. 
-2. An "interval_dummy" column is created as discussed above (step 3 under "Preprocessing" and question 2 part 1)to plot timestamps on the x-axis instead of strings. 
-3. `weekdays()` function is used to create the "day" column from the "datetime" variable of the dataset having actual dates and times of measurement. 
+1. The imputed data set is used.  
+2. An "interval_dummy" column is created as discussed above (step 3 under "Preprocessing" and question 2 part 1)to plot timestamps on the x-axis instead of strings.  
+3. `weekdays()` function is used to create the "day" column from the "datetime" variable of the dataset having actual dates and times of measurement.   
 4. A new column called "week_day_position" is added to the data frame with two levels- "Weekday" if the day is "Mon" through "Fri", and "Weekend" if the day is "Sat" or "Sun".
 
 
