@@ -15,7 +15,8 @@ This assignment deals with the analysis of a  personal activity monitoring datas
 
 Before beginning the analysis, the various packages used in the analysis are loaded.
 
-```{r echo = TRUE, message = FALSE, results = 'hide'}
+
+```r
 library(dplyr)
 library(ggplot2)
 library(scales)
@@ -27,7 +28,8 @@ library(scales)
 
 For loading the data, the .zip file containing the required .csv file is unzipped into the working directory. Then it is read with `read.csv()` as shown below.
 
-```{r}
+
+```r
 unzip("activity.zip")
 activitydata <- read.csv("activity.csv")
 ```
@@ -39,7 +41,8 @@ activitydata <- read.csv("activity.csv")
 3. A new data frame called "activitydata_tbldf_dummy" is created and a column called "interval_dummy" is generated in it by applying `as.POSIXct()` function just to the interval column. This data frame is to be used for question 2, "What is the average daily activity pattern?"  of the analysis.   
 (Reason for step 3: It can be seen that the application of a string of "HH : MM" format to `as.POSIXct()` assumes today's date and the result produced consists of the timestamp in its entirety - with today's date and the time input! This useful albeit incorrect treatment is intended to plot the time-series of part 2 of this analysis with time-stamps on its x-axis, rather than strings. The problem of the appearance of today's date in the plot is solved by making use of `scale_x_datetime()` function from "ggplot2"" with the argument `labels = date_format("%H:%M")`, where `date_format()` itself is from "scales" package.)
 
-```{r}
+
+```r
 activitydata_tbldf <- tbl_df(activitydata)
 
 interm1 <- filter(activitydata_tbldf, interval < 10)
@@ -78,10 +81,32 @@ This is done as follows:
 1. Group the filtered data frame (data frame after removing NA values) by the value of the "date" column using the `group_by()` function.  
 2. Calculate the sum of the steps for each group of the grouped data while ignoring the NA values, using the `summarise()` function.  
 
-```{r}
+
+```r
 by_date <- group_by(filter(activitydata_tbldf,!is.na(steps)),date)
 total_steps_df <- summarise(by_date,steps_tot = sum(steps,na.rm = TRUE))
 total_steps_df
+```
+
+```
+## Source: local data frame [53 x 2]
+## 
+##          date steps_tot
+##        (fctr)     (int)
+## 1  2012-10-02       126
+## 2  2012-10-03     11352
+## 3  2012-10-04     12116
+## 4  2012-10-05     13294
+## 5  2012-10-06     15420
+## 6  2012-10-07     11015
+## 7  2012-10-09     12811
+## 8  2012-10-10      9900
+## 9  2012-10-11     10304
+## 10 2012-10-12     17382
+## ..        ...       ...
+```
+
+```r
 total_steps <- select(total_steps_df,steps_tot)
 ```
 
@@ -89,22 +114,36 @@ total_steps <- select(total_steps_df,steps_tot)
 
 The histogram of the total steps per day is plotted using `ggplot()` function as below.
 
-```{r message=FALSE}
+
+```r
 g <- ggplot(data = total_steps, aes(total_steps$steps_tot))
 g + geom_histogram(col = "white",fill = "blue") + labs(title = "Histogram for total steps per day") + labs(x = "Total steps per day", y = "Count of days")
 ```
 
+![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-5-1.png) 
+
 ### Part 3: Calculating the mean and median of the total steps taken per day (ignoring NA values)
 
-```{r}
+
+```r
 mean_steps_date <- mean(total_steps$steps_tot)
 mean_steps_date
+```
 
+```
+## [1] 10766.19
+```
+
+```r
 median_steps_date <- median(total_steps$steps_tot)
 median_steps_date
 ```
 
-Thus the `mean` and `median` of the total steps per day are **`r (mean_steps_date)`** and **`r median_steps_date`** respectively.
+```
+## [1] 10765
+```
+
+Thus the `mean` and `median` of the total steps per day are **1.0766189 &times; 10<sup>4</sup>** and **10765** respectively.
 
 ## What is the average daily activity pattern?
 
@@ -115,7 +154,8 @@ This is done as follows:
 2. Find the mean of the steps for each identifier across all the days.  
 3. Plot with interval on x-axis and the means on the y-axis. (The breaks are shown at intervals of 2 hours.)
 
-```{r}
+
+```r
 by_interval <- group_by(activitydata_tbldf_dummy,interval_dummy)
 
 mean_steps_2 <- summarise(by_interval, steps_mean_interval = mean(steps,na.rm = TRUE))
@@ -125,12 +165,15 @@ h <- ggplot(data = mean_steps_2, aes(x = mean_steps_2$interval_dummy, y = mean_s
 h + geom_line(col = "blue", size = 0.75) + labs(title = "Time-series plot") + labs(x = "Interval identifier", y = "Steps averaged across all days") + scale_x_datetime(labels = date_format("%H:%M"), breaks = date_breaks("2 hour"))
 ```
 
+![plot of chunk unnamed-chunk-7](figure/unnamed-chunk-7-1.png) 
+
 
 ### Part 2: Finding the interval with the maximum mean steps
 
 The time interval that is required is obtained by sorting the mean steps across all days in descending order and taking the first element in the interval column.
 
-```{r}
+
+```r
 ordered_mean_steps_2 <- arrange(mean_steps_2,desc(steps_mean_interval))
 
 max_steps_interval <- ordered_mean_steps_2[1,1]
@@ -142,29 +185,32 @@ max_steps_interval <- mutate(max_steps_interval,Interval_maxsteps = interval_dum
 max_steps_interval <- select(max_steps_interval, Interval_maxsteps, Maximum_mean_steps)
 max_steps_interval
 ```
-```{r echo = FALSE} 
-a <- strsplit(max_steps_interval[1,1], split = ":")[[1]]
-a <- paste(a,collapse = "")
-a <- as.numeric(a)
-a <- a + 5
-a <- strsplit(as.character(a), split = NULL)[[1]]
-a  <- paste("0",a[1],":",a[2],a[3], sep = "")
+
+```
+##   Interval_maxsteps Maximum_mean_steps
+## 1             08:35           206.1698
 ```
 
-It can be observed that the interval identifier corresponding to the maximum number of steps averaged across all days is **`r max_steps_interval[1,1]`**, which means that the maximum activity on average occurred between **`r max_steps_interval[1,1]`** and **`r a`** with the maximum average steps being **`r max_steps`**
+
+It can be observed that the interval identifier corresponding to the maximum number of steps averaged across all days is **08:35**, which means that the maximum activity on average occurred between **08:35** and **08:40** with the maximum average steps being **206.1698113**
 
 ## Imputing missing values
 
 ### Part 1: Calculating the total number of missing values in the dataset
 
-```{r}
+
+```r
 part_df_na <- filter(activitydata_tbldf, is.na(steps))
 part_df_no_na <- filter(activitydata_tbldf,!is.na(steps))
 NA_number <- nrow(part_df_na)
 NA_number
 ```
 
-Thus it can be seen that there are **`r NA_number`** missing values in the data set.
+```
+## [1] 2304
+```
+
+Thus it can be seen that there are **2304** missing values in the data set.
 
 ### Part 2: The strategy for filling in missing values
 
@@ -172,7 +218,8 @@ For this part, it is chosen that the mean for the corresponding 5-minute period 
 
 ### Part 3: Creating new dataset with missing values filled in
 
-```{r}
+
+```r
 mean_steps_3 <- mutate(mean_steps_2, interval = activitydata_tbldf$interval[1:288])
 part_df_na_filled <- group_by(part_df_na, interval)
 part_df_na_filled$steps <- mean_steps_3$steps_mean_interval
@@ -185,38 +232,74 @@ df_na_filled <- arrange(df_na_filled, date_time)
 
 #### Calculating total steps per day for imputed data
 
-```{r}
+
+```r
 by_date_na_filled <- group_by(df_na_filled,date)
 total_steps_df_na_filled <- summarise(by_date_na_filled,steps_tot = sum(steps))
 total_steps_df_na_filled
+```
+
+```
+## Source: local data frame [61 x 2]
+## 
+##          date steps_tot
+##        (fctr)     (dbl)
+## 1  2012-10-01  10766.19
+## 2  2012-10-02    126.00
+## 3  2012-10-03  11352.00
+## 4  2012-10-04  12116.00
+## 5  2012-10-05  13294.00
+## 6  2012-10-06  15420.00
+## 7  2012-10-07  11015.00
+## 8  2012-10-08  10766.19
+## 9  2012-10-09  12811.00
+## 10 2012-10-10   9900.00
+## ..        ...       ...
+```
+
+```r
 total_steps_na_filled <- select(total_steps_df_na_filled,steps_tot)
 ```
 
 #### Plotting histogram of total steps per day for imputed data
 
-```{r}
+
+```r
 range <- max(total_steps_na_filled$steps_tot) - min(total_steps_na_filled$steps_tot)
 i <- ggplot(data = total_steps_na_filled, aes(total_steps_na_filled$steps_tot))
 i + geom_histogram(binwidth = range/30 ,col = "white",fill = "blue") + labs(title = "Histogram for total steps per day for new dataset") + labs(x = "Total steps per day", y = "Count of days")
 ```
 
+![plot of chunk unnamed-chunk-13](figure/unnamed-chunk-13-1.png) 
+
 #### Calculating mean and median of total steps per day for imputed data
 
-```{r}
+
+```r
 mean_steps_date_na_filled <- mean(total_steps_na_filled$steps_tot)
 mean_steps_date_na_filled
+```
 
+```
+## [1] 10766.19
+```
+
+```r
 median_steps_date_na_filled <- median(total_steps_na_filled$steps_tot)
 median_steps_date_na_filled
 ```
 
-The `mean` and `median` values for the imputed data set are **`r (mean_steps_date_na_filled)`** and **`r (median_steps_date_na_filled)`** respectively. 
+```
+## [1] 10766.19
+```
+
+The `mean` and `median` values for the imputed data set are **1.0766189 &times; 10<sup>4</sup>** and **1.0766189 &times; 10<sup>4</sup>** respectively. 
 
 #### Impact of imputing
 
-First, it can be observed that there is a difference of **`r (mean_steps_date_na_filled - mean_steps_date)`** in the means and **`r (median_steps_date_na_filled - median_steps_date)`** in the medians of imputed data set and original data set.
+First, it can be observed that there is a difference of **0** in the means and **1.1886792** in the medians of imputed data set and original data set.
 
-Theoretically, since all the missing values are replaced by the means for the 5-minute interval, each missing day newly gets the same total steps, which is identical to the mean calculated ignoring the days without measurement, i.e. `r mean_steps_date`. Thus this newly adds a number of `r mean_steps_date`s to the grandsum, taking whose mean yields an unchanged result.  This does not apply to the median, thus the slight difference in medians. But it can be observed that, since some significant number of means are added to the "total number of steps per day" data and mean is located near the centre, it is likely that the new median is equal to the new/old mean itself.   
+Theoretically, since all the missing values are replaced by the means for the 5-minute interval, each missing day newly gets the same total steps, which is identical to the mean calculated ignoring the days without measurement, i.e. 1.0766189 &times; 10<sup>4</sup>. Thus this newly adds a number of 1.0766189 &times; 10<sup>4</sup>s to the grandsum, taking whose mean yields an unchanged result.  This does not apply to the median, thus the slight difference in medians. But it can be observed that, since some significant number of means are added to the "total number of steps per day" data and mean is located near the centre, it is likely that the new median is equal to the new/old mean itself.   
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
@@ -228,7 +311,8 @@ For this,
 3. `weekdays()` function is used to create the "day" column from the "datetime" variable of the dataset having actual dates and times of measurement. 
 4. A new column called "week_day_position" is added to the data frame with two levels- "Weekday" if the day is "Mon" through "Fri", and "Weekend" if the day is "Sat" or "Sun".
 
-```{r}
+
+```r
 weekpos_df <- mutate(df_na_filled, interval_dummy = as.POSIXct(interval, format = "%H : %M", tz = "GMT"), day = weekdays(date_time, abbreviate = TRUE))
 
 weekday_df <- filter(weekpos_df, day == "Mon" | day == "Tue" | day == "Wed" | day == "Thu" | day == "Fri")
@@ -248,13 +332,16 @@ This is done as follows:
 2. Find the mean of the steps for each identifier across all the weekdays and weekends.   
 3. Plot with interval on x-axis and the means on the y-axis with two facets; one for "Weekday", another for "Weekend". (The breaks are shown at intervals of 2 hours.)   
 
-```{r}
+
+```r
 by_interval_weekpos <- group_by(weekpos_df, week_day_position, interval_dummy)
 total_steps_weekpos <- summarise(by_interval_weekpos, steps_day_weekpos = mean(steps))
 
 j <- ggplot(data = total_steps_weekpos, aes(x = interval_dummy, y = steps_day_weekpos))
 j + geom_line(color = "blue", size = 0.75) + facet_grid(week_day_position~.) + scale_x_datetime(labels = date_format("%H:%M"), breaks = date_breaks("2 hour")) + labs(title = "Time-series plot") + labs(x = "Interval identifier", y = "Steps averaged across all days")
 ```
+
+![plot of chunk unnamed-chunk-16](figure/unnamed-chunk-16-1.png) 
 
 #### Differences between activity pattern for weekdays and weekends
 
