@@ -148,7 +148,7 @@ Thus the `mean` and `median` of the total steps per day are **1.0766189 &times; 
 This is done as follows:  
 1. Group the data by the interval identifier.  
 2. Find the mean of the steps for each identifier across all the days.  
-3. Plot with interval on x-axis and the means on the y-axis. (The breaks are shown at intervals of 2 hours.)
+3. Plot with interval on x-axis and the means on the y-axis.
 
 
 ```r
@@ -158,11 +158,10 @@ mean_steps_2 <- summarise(by_interval, steps_mean_interval = mean(steps,na.rm = 
 mean_steps_interval <- select(mean_steps_2, steps_mean_interval)
 
 h <- ggplot(data = mean_steps_2, aes(x = interval_dummy, y = steps_mean_interval))
-h + geom_line(col = "blue", size = 0.75) + 
+h + geom_line(col = "blue", size = 0.7) + 
     labs(title = "Time-series plot") +
     labs(x = "Interval identifier", y = "Steps averaged across all days") + 
-    scale_x_datetime(labels = date_format("%H:%M"), breaks = date_breaks("2 hour")) + 
-    theme(aspect.ratio = 0.60)
+    scale_x_datetime(labels = date_format("%H:%M"))
 ```
 
 ![plot of chunk unnamed-chunk-7](figure/unnamed-chunk-7-1.png) 
@@ -331,7 +330,7 @@ weekpos_df <- select(weekpos_df, -day)
 This is done as follows:  
 1. Group the data by "week_day_position" and "interval_dummy".  
 2. Find the mean of the steps for each identifier across all the weekdays and weekends.   
-3. Plot with interval on x-axis and the means on the y-axis with two facets; one for "Weekday", another for "Weekend". (The breaks are shown at intervals of 2 hours.)   
+3. Plot with interval on x-axis and the means on the y-axis with two facets; one for "Weekday", another for "Weekend". 
 
 
 ```r
@@ -339,12 +338,11 @@ by_interval_weekpos <- group_by(weekpos_df, week_day_position, interval_dummy)
 total_steps_weekpos <- summarise(by_interval_weekpos, steps_day_weekpos = mean(steps))
 
 j <- ggplot(data = total_steps_weekpos, aes(x = interval_dummy, y = steps_day_weekpos))
-j + geom_line(color = "blue", size = 0.75) + 
+j + geom_line(color = "blue", size = 0.7) + 
     facet_grid(week_day_position ~.) + 
-    scale_x_datetime(labels = date_format("%H:%M"), breaks = date_breaks("2 hour")) + 
+    scale_x_datetime(labels = date_format("%H:%M")) + 
     labs(title = "Time-series plot") + 
-    labs(x = "Interval identifier", y = "Steps averaged across all days") +
-    theme(aspect.ratio = 0.35)
+    labs(x = "Interval identifier", y = "Steps averaged across all days")
 ```
 
 ![plot of chunk unnamed-chunk-16](figure/unnamed-chunk-16-1.png) 
